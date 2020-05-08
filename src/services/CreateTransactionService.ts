@@ -3,6 +3,8 @@ import TransactionsRepository from '../repositories/TransactionsRepository';
 import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
+import Category from '../models/Category';
+
 
 
 interface Request {
@@ -18,6 +20,19 @@ class CreateTransactionService {
   public async execute({ title, value, type, category }:
     Request): Promise<Transaction> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
+    const categoryRepository = getRepository(Category);
+
+    let transactionCategory = await categoryRepository.findOne({
+      where: {
+        title: category,
+      }
+    });
+    if (!transactionCategory) {
+      transactionCategory =  categoryRepository.create({
+        title: category,
+      });
+      await categoryRepository.save(transactionCategory);
+    }
 
     if (!["income", "outcome"].includes(type)) {
       throw new AppError("type invalid");
@@ -32,10 +47,11 @@ class CreateTransactionService {
 
 
     const transaction = transactionsRepository.create({
-        title,
-        value,
-        type
-      });
+      title,
+      value,
+      type,
+      category:transactionCategory,
+    });
 
     await transactionsRepository.save(transaction);
 

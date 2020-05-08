@@ -3,7 +3,7 @@
   "host": "192.168.99.100",
   "port": 5432,
   "username": "postgres",
-  "password": "",
+  "password": "baubau37",
   "database": "gostack_desafio06",
   "entities": ["./src/models/*.ts"],
   "migrations": ["./src/database/migrations/*.ts"],
